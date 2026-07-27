@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebTrap - Presentation</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+        
+        body {
+            margin: 0; padding: 0; font-family: 'Inter', sans-serif;
+            background-color: #0d1117; color: #c9d1d9; overflow: hidden;
+            user-select: none;
+        }
+
+        /* The slides */
+        .slide {
+            display: none;
+            width: 100vw; height: 100vh;
+            flex-direction: column; justify-content: center; align-items: center;
+            text-align: center;
+            padding: 40px; box-sizing: border-box;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        .slide.active { display: flex; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* Typography */
+        h1 { color: #58a6ff; font-size: 3.5rem; margin-bottom: 10px; }
+        h2 { color: #58a6ff; font-size: 2.5rem; margin-bottom: 30px; border-bottom: 2px solid #30363d; padding-bottom: 15px; width: 100%; max-width: 900px; }
+        h3 { color: #ff7b72; font-size: 1.8rem; margin-top: 0; }
+        p, li { font-size: 1.4rem; line-height: 1.6; max-width: 900px; text-align: left; }
+        ul { margin-top: 20px; } li { margin-bottom: 15px; }
+        .highlight { color: #ff7b72; font-weight: 600; }
+
+        /* Layout */
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; width: 100%; max-width: 1000px; margin-top: 30px; }
+        .card { background: #161b22; border: 1px solid #30363d; border-radius: 10px; padding: 30px; text-align: left; }
+        .code-block { background: #000; color: #00ff00; font-family: monospace; padding: 20px; border-radius: 8px; border-left: 4px solid #ff7b72; font-size: 1.1rem; text-align: left; width: 100%; max-width: 900px; margin: 20px auto; white-space: pre-wrap; }
+
+        /* Full Screen Click Zones */
+        #left-zone {
+            position: fixed; top: 0; left: 0; width: 30vw; height: 100vh;
+            z-index: 9999; cursor: pointer;
+        }
+        #right-zone {
+            position: fixed; top: 0; right: 0; width: 70vw; height: 100vh;
+            z-index: 9999; cursor: pointer;
+        }
+
+        /* Visual Arrows */
+        .arrow {
+            position: fixed; top: 50%; transform: translateY(-50%);
+            background: rgba(48, 54, 61, 0.8); color: #fff;
+            font-size: 3rem; padding: 15px 25px; border-radius: 8px;
+            pointer-events: none; /* Let the zones handle clicks */
+            z-index: 10000; transition: background 0.2s;
+        }
+        #left-zone:hover ~ #arrow-left { background: #58a6ff; }
+        #right-zone:hover ~ #arrow-right { background: #58a6ff; }
+        
+        #arrow-left { left: 20px; }
+        #arrow-right { right: 20px; }
+
+        .controls { position: fixed; bottom: 20px; right: 20px; color: #8b949e; font-size: 1rem; z-index: 10000; pointer-events: none; }
+    </style>
+</head>
+<body>
+
+    <!-- Click Zones -->
+    <div id="left-zone" onclick="prevSlide()"></div>
+    <div id="right-zone" onclick="nextSlide()"></div>
+
+    <!-- Visual Arrows -->
+    <div id="arrow-left" class="arrow">&#10094;</div>
+    <div id="arrow-right" class="arrow">&#10095;</div>
+
+    <!-- Slides -->
+    <div class="slide active" id="slide-1">
+        <h1>WebTrap</h1>
+        <h3>Active Defense Honeypot & Threat Profiler</h3>
+        <p style="text-align:center; color:#8b949e; margin-top:20px;">Final Year Cybersecurity Project</p>
+        <p style="text-align:center; font-size:1.2rem; margin-top:50px; color:#ff7b72;">(Click anywhere on the right side of the screen to start)</p>
+    </div>
+
+    <div class="slide" id="slide-2">
+        <h2>1. The Threat Landscape</h2>
+        <ul>
+            <li>Modern cyber attacks are <span class="highlight">highly automated</span> and continuous.</li>
+            <li>Hackers deploy massive botnets to scan thousands of web servers per second.</li>
+            <li>Traditional defenses (Firewalls/IDS) rely on passive blocking.</li>
+            <li>This creates a massive volume of alerts, leading to <span class="highlight">Alert Fatigue</span>.</li>
+        </ul>
+    </div>
+
+    <div class="slide" id="slide-3">
+        <h2>2. Passive vs. Active Defense</h2>
+        <div class="grid">
+            <div class="card" style="border-top: 4px solid #ff7b72;">
+                <h3>Traditional Firewalls</h3>
+                <p>Simply drop the connection when a threat is detected.</p>
+                <p><strong>Result:</strong> Zero intelligence is gathered.</p>
+            </div>
+            <div class="card" style="border-top: 4px solid #58a6ff;">
+                <h3 style="color:#58a6ff;">Active Defense</h3>
+                <p>Engages the attacker, tricks them, and studies them.</p>
+                <p><strong>Result:</strong> Gathers Intelligence & wastes attacker resources.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="slide" id="slide-4">
+        <h2>3. Proposed Solution: WebTrap</h2>
+        <p style="text-align:center; margin-bottom: 30px;">A custom Deception Technology framework.</p>
+        <div style="display:inline-block; text-align:left;">
+            <ul>
+                <li><strong>The Lure:</strong> A simulated Enterprise Login Gateway.</li>
+                <li><strong>The Trap:</strong> Silently logs credential stuffing and payloads.</li>
+                <li><strong>The Profiler:</strong> Automatically traces the hacker's ISP.</li>
+                <li><strong>The Retaliation:</strong> Wastes attacker's computing resources.</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="slide" id="slide-5">
+        <h2>4. System Architecture</h2>
+        <p style="text-align:center;">Built using <span class="highlight">Python 3</span> and <span class="highlight">Bash</span> for zero-dependency deployment.</p>
+        <div class="grid">
+            <div class="card">
+                <h3>🐍 Python Engine</h3>
+                <p>- Handles HTTP Requests.<br>- Executes Deep Packet Inspection.<br>- Applies Tarpit Defense.</p>
+            </div>
+            <div class="card">
+                <h3 style="color:#ff7b72;">⚙️ Bash Profiling Engine</h3>
+                <p>- Asynchronous Daemon.<br>- OSINT API Integration.<br>- Generates HTML Dashboards.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="slide" id="slide-6">
+        <h2>5. Deep Packet Inspection (DPI)</h2>
+        <p style="text-align:center;">Analyzes HTTP payloads against a custom Regex Engine.</p>
+        <div class="code-block">
+# Threat Signatures Engine
+SIGNATURES = {
+    "SQL_INJECTION": re.compile(r"(%27)|(')|(--)|(UNION)|(SELECT)"),
+    "XSS_SCRIPTING": re.compile(r"(<script>)|(%3Cscript%3E)"),
+    "PATH_TRAVERSAL": re.compile(r"(\.\./)|(%2e%2e%2f)")
+}
+        </div>
+    </div>
+
+    <div class="slide" id="slide-7">
+        <h2>6. Tarpitting (Active Retaliation)</h2>
+        <ul>
+            <li>Automated scanning tools expect rapid HTTP responses.</li>
+            <li>When WebTrap detects a payload, it forces a <span class="highlight">5-second artificial delay</span>.</li>
+            <li>This paralyzes the attacker's scanning script, draining TCP threads.</li>
+        </ul>
+    </div>
+
+    <div class="slide" id="slide-8">
+        <h2>7. Threat Intelligence Output</h2>
+        <p style="text-align:center;">Raw terminal output of the Bash Profiling Engine:</p>
+        <div class="code-block" style="color:#c9d1d9;">
+===================================================
+<span style="color:#ff7b72">[!] CRITICAL ALERT: Malicious activity detected from 172.24.58.154</span>
+    -> Signatures Matched: [ XSS_SCRIPTING ]
+    -> Executing OSINT Profiling...
+<span style="color:#7ee787">    -> Target Identified: London, GB (Virgin Media)</span>
+===================================================
+        </div>
+    </div>
+
+    <div class="slide" id="slide-9">
+        <h1 style="color: #ff7b72;">8. LIVE DEMO</h1>
+        <p style="text-align:center; margin-top:20px;">Demonstrating Credential Stuffing & Payload Injection</p>
+    </div>
+
+    <div class="slide" id="slide-10">
+        <h2>9. Conclusion</h2>
+        <ul>
+            <li>WebTrap demonstrates that enterprise-grade Active Defense is highly achievable.</li>
+            <li>Shifting the security posture from <strong>Reactive</strong> to <strong>Proactive</strong> yields intelligence.</li>
+            <li>Deception technology drastically reduces SOC alert fatigue.</li>
+        </ul>
+        <h1 style="color:#ff7b72; margin-top:50px; font-size:2.5rem;">Thank You.</h1>
+    </div>
+
+    <div class="controls">
+        Slide <span id="current-slide">1</span> / 10
+    </div>
+
+    <script>
+        var currentSlide = 1;
+        var totalSlides = 10;
+
+        function updateUI() {
+            var i;
+            for (i = 1; i <= totalSlides; i++) {
+                document.getElementById('slide-' + i).style.display = 'none';
+            }
+            document.getElementById('slide-' + currentSlide).style.display = 'flex';
+            document.getElementById('current-slide').innerText = currentSlide;
+
+            if (currentSlide === 1) {
+                document.getElementById('arrow-left').style.opacity = '0.1';
+            } else {
+                document.getElementById('arrow-left').style.opacity = '1';
+            }
+
+            if (currentSlide === totalSlides) {
+                document.getElementById('arrow-right').style.opacity = '0.1';
+            } else {
+                document.getElementById('arrow-right').style.opacity = '1';
+            }
+        }
+
+        function prevSlide() {
+            if (currentSlide > 1) {
+                currentSlide--;
+                updateUI();
+            }
+        }
+
+        function nextSlide() {
+            if (currentSlide < totalSlides) {
+                currentSlide++;
+                updateUI();
+            }
+        }
+
+        document.onkeydown = function(e) {
+            if (e.keyCode === 39 || e.keyCode === 32) { // Right Arrow or Space
+                nextSlide();
+            } else if (e.keyCode === 37) { // Left Arrow
+                prevSlide();
+            }
+        };
+
+        // Initialize
+        updateUI();
+    </script>
+</body>
+</html>
