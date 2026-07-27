@@ -121,16 +121,51 @@
             color: #8b949e;
             font-size: 1rem;
         }
+
+        /* On-Screen Navigation Arrows */
+        .nav-button {
+            position: fixed;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(48, 54, 61, 0.5);
+            color: #c9d1d9;
+            border: none;
+            font-size: 2rem;
+            padding: 15px 20px;
+            cursor: pointer;
+            border-radius: 8px;
+            z-index: 100;
+            transition: background 0.3s;
+            user-select: none;
+        }
+        
+        .nav-button:hover {
+            background: rgba(88, 166, 255, 0.8);
+            color: #fff;
+        }
+
+        #prev-btn { left: 20px; }
+        #next-btn { right: 20px; }
+        
+        /* Hide buttons if they hit the bounds */
+        .nav-button:disabled {
+            opacity: 0.2;
+            cursor: not-allowed;
+        }
     </style>
 </head>
 <body>
+
+    <!-- Navigation Arrows -->
+    <button class="nav-button" id="prev-btn" onclick="navigate(-1)">&#10094;</button>
+    <button class="nav-button" id="next-btn" onclick="navigate(1)">&#10095;</button>
 
     <!-- Slide 1 -->
     <div class="slide-container active" id="slide-1">
         <h1>WebTrap</h1>
         <h3>Active Defense Honeypot & Threat Profiler</h3>
         <p style="text-align:center; color:#8b949e; margin-top:20px;">Final Year Cybersecurity Project</p>
-        <p style="text-align:center; font-size:1rem; margin-top:50px;">(Use Left / Right Arrow Keys to Navigate)</p>
+        <p style="text-align:center; font-size:1rem; margin-top:50px;">(Click the arrows or use Arrow Keys to Navigate)</p>
     </div>
 
     <!-- Slide 2 -->
@@ -254,27 +289,40 @@ SIGNATURES = {
         let currentSlide = 1;
         const totalSlides = 10;
 
+        function updateButtons() {
+            document.getElementById('prev-btn').disabled = (currentSlide === 1);
+            document.getElementById('next-btn').disabled = (currentSlide === totalSlides);
+        }
+
         function showSlide(index) {
             document.querySelectorAll('.slide-container').forEach(slide => {
                 slide.classList.remove('active');
             });
             document.getElementById(`slide-${index}`).classList.add('active');
             document.getElementById('current-slide').innerText = index;
+            updateButtons();
+        }
+
+        function navigate(direction) {
+            if (direction === 1 && currentSlide < totalSlides) {
+                currentSlide++;
+                showSlide(currentSlide);
+            } else if (direction === -1 && currentSlide > 1) {
+                currentSlide--;
+                showSlide(currentSlide);
+            }
         }
 
         window.addEventListener('keydown', (e) => {
             if (e.key === 'ArrowRight' || e.key === 'Space') {
-                if (currentSlide < totalSlides) {
-                    currentSlide++;
-                    showSlide(currentSlide);
-                }
+                navigate(1);
             } else if (e.key === 'ArrowLeft') {
-                if (currentSlide > 1) {
-                    currentSlide--;
-                    showSlide(currentSlide);
-                }
+                navigate(-1);
             }
         });
+
+        // Initialize button state
+        updateButtons();
     </script>
 </body>
 </html>
