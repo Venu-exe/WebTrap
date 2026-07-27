@@ -148,7 +148,7 @@
         #next-btn { right: 20px; }
         
         /* Hide buttons if they hit the bounds */
-        .nav-button:disabled {
+        .nav-button.disabled {
             opacity: 0.2;
             cursor: not-allowed;
         }
@@ -157,8 +157,8 @@
 <body>
 
     <!-- Navigation Arrows -->
-    <button class="nav-button" id="prev-btn">&#10094;</button>
-    <button class="nav-button" id="next-btn">&#10095;</button>
+    <div class="nav-button" id="prev-btn" onclick="prevSlide()">&#10094;</div>
+    <div class="nav-button" id="next-btn" onclick="nextSlide()">&#10095;</div>
 
     <!-- Slide 1 -->
     <div class="slide-container active" id="slide-1">
@@ -289,44 +289,54 @@ SIGNATURES = {
         let currentSlide = 1;
         const totalSlides = 10;
 
-        function updateButtons() {
-            document.getElementById('prev-btn').disabled = (currentSlide === 1);
-            document.getElementById('next-btn').disabled = (currentSlide === totalSlides);
-        }
-
         function showSlide(index) {
             document.querySelectorAll('.slide-container').forEach(slide => {
                 slide.classList.remove('active');
             });
-            document.getElementById(`slide-${index}`).classList.add('active');
+            document.getElementById('slide-' + index).classList.add('active');
             document.getElementById('current-slide').innerText = index;
-            updateButtons();
+            
+            if (index === 1) {
+                document.getElementById('prev-btn').style.opacity = '0.2';
+                document.getElementById('prev-btn').style.cursor = 'not-allowed';
+            } else {
+                document.getElementById('prev-btn').style.opacity = '1';
+                document.getElementById('prev-btn').style.cursor = 'pointer';
+            }
+            
+            if (index === totalSlides) {
+                document.getElementById('next-btn').style.opacity = '0.2';
+                document.getElementById('next-btn').style.cursor = 'not-allowed';
+            } else {
+                document.getElementById('next-btn').style.opacity = '1';
+                document.getElementById('next-btn').style.cursor = 'pointer';
+            }
         }
 
-        function navigate(direction) {
-            if (direction === 1 && currentSlide < totalSlides) {
-                currentSlide++;
-                showSlide(currentSlide);
-            } else if (direction === -1 && currentSlide > 1) {
+        function prevSlide() {
+            if (currentSlide > 1) {
                 currentSlide--;
                 showSlide(currentSlide);
             }
         }
 
-        // Button Click Listeners
-        document.getElementById('prev-btn').addEventListener('click', () => navigate(-1));
-        document.getElementById('next-btn').addEventListener('click', () => navigate(1));
+        function nextSlide() {
+            if (currentSlide < totalSlides) {
+                currentSlide++;
+                showSlide(currentSlide);
+            }
+        }
 
         window.addEventListener('keydown', (e) => {
             if (e.key === 'ArrowRight' || e.key === 'Space') {
-                navigate(1);
+                nextSlide();
             } else if (e.key === 'ArrowLeft') {
-                navigate(-1);
+                prevSlide();
             }
         });
 
-        // Initialize button state
-        updateButtons();
+        // Initialize
+        showSlide(1);
     </script>
 </body>
 </html>
