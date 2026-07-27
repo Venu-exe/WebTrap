@@ -1,212 +1,279 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>WebTrap - Final Year Project Presentation</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reset.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reveal.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/theme/black.min.css" id="theme">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebTrap - Presentation</title>
     <style>
-        .reveal h1, .reveal h2, .reveal h3 {
-            color: #58a6ff;
-            text-transform: none;
-        }
-        .reveal .highlight {
-            color: #ff7b72;
-            font-weight: bold;
-        }
-        .reveal p, .reveal li {
-            font-size: 0.8em;
-            line-height: 1.4;
-        }
-        .reveal ul {
-            list-style-type: square;
-        }
-        .code-block {
-            background: #161b22;
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+        
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            background-color: #0d1117;
             color: #c9d1d9;
-            padding: 15px;
-            border-radius: 8px;
-            font-family: monospace;
-            font-size: 0.55em;
+            overflow: hidden; /* Hide scrollbars */
+        }
+
+        .slide-container {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: absolute;
+            top: 0;
+            left: 0;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+            pointer-events: none;
+            padding: 40px;
+            box-sizing: border-box;
+            text-align: center;
+        }
+
+        .slide-container.active {
+            opacity: 1;
+            pointer-events: auto;
+            z-index: 10;
+        }
+
+        h1 {
+            color: #58a6ff;
+            font-size: 3.5rem;
+            margin-bottom: 10px;
+        }
+
+        h2 {
+            color: #58a6ff;
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #30363d;
+            padding-bottom: 15px;
+            width: 80%;
+            max-width: 900px;
+        }
+
+        h3 {
+            color: #ff7b72;
+            font-size: 1.8rem;
+        }
+
+        p, li {
+            font-size: 1.4rem;
+            line-height: 1.6;
+            max-width: 900px;
             text-align: left;
-            border-left: 4px solid #ff7b72;
+        }
+
+        ul {
             margin-top: 20px;
         }
-        .grid-container {
+
+        li {
+            margin-bottom: 15px;
+        }
+
+        .highlight {
+            color: #ff7b72;
+            font-weight: 600;
+        }
+
+        .grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 20px;
+            gap: 30px;
+            width: 80%;
+            max-width: 1000px;
             margin-top: 30px;
         }
+
         .card {
-            border: 2px solid #30363d;
-            padding: 20px;
+            background: #161b22;
+            border: 1px solid #30363d;
             border-radius: 10px;
-            background: #0d1117;
+            padding: 30px;
+            text-align: left;
+        }
+
+        .code-block {
+            background: #000;
+            color: #00ff00;
+            font-family: monospace;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #ff7b72;
+            font-size: 1.1rem;
+            text-align: left;
+            width: 80%;
+            max-width: 900px;
+            margin: 20px auto;
+            white-space: pre-wrap;
+        }
+
+        .controls {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 100;
+            color: #8b949e;
+            font-size: 1rem;
         }
     </style>
 </head>
 <body>
-    <div class="reveal">
-        <div class="slides">
-            
-            <!-- Slide 1: Title -->
-            <section>
-                <h1>WebTrap</h1>
-                <h3>Active Defense Honeypot & Threat Profiler</h3>
-                <p>Final Year Cybersecurity Project</p>
-                <p style="color:#8b949e; font-size: 0.6em; margin-top: 50px;">Use Spacebar or Arrow Keys to navigate</p>
-            </section>
 
-            <!-- Slide 2: The Modern Threat Landscape -->
-            <section>
-                <h2>1. The Threat Landscape</h2>
-                <ul>
-                    <li>Modern cyber attacks are <span class="highlight">highly automated</span> and continuous.</li>
-                    <li>Hackers deploy massive botnets to scan thousands of web servers per second.</li>
-                    <li>Traditional defenses (Firewalls/IDS) rely on passive blocking (e.g., dropping packets).</li>
-                    <li>This creates a massive volume of alerts, leading to <span class="highlight">Alert Fatigue</span> for Security Analysts.</li>
-                </ul>
-            </section>
+    <!-- Slide 1 -->
+    <div class="slide-container active" id="slide-1">
+        <h1>WebTrap</h1>
+        <h3>Active Defense Honeypot & Threat Profiler</h3>
+        <p style="text-align:center; color:#8b949e; margin-top:20px;">Final Year Cybersecurity Project</p>
+        <p style="text-align:center; font-size:1rem; margin-top:50px;">(Use Left / Right Arrow Keys to Navigate)</p>
+    </div>
 
-            <!-- Slide 3: The Flaw in Passive Defense -->
-            <section>
-                <h2>2. The Problem with Passive Defense</h2>
-                <div class="grid-container">
-                    <div class="card">
-                        <h3 style="color:#ff7b72">Traditional Firewalls</h3>
-                        <p>Simply drop the connection when a threat is detected.</p>
-                        <p><strong>Result:</strong> The hacker immediately moves on to the next target. Zero intelligence is gathered about the attacker's motives.</p>
-                    </div>
-                    <div class="card">
-                        <h3 style="color:#58a6ff">Active Defense</h3>
-                        <p>Engages the attacker, tricks them, and studies their methodology.</p>
-                        <p><strong>Result:</strong> Gathers high-fidelity Threat Intelligence and actively wastes the attacker's resources.</p>
-                    </div>
-                </div>
-            </section>
+    <!-- Slide 2 -->
+    <div class="slide-container" id="slide-2">
+        <h2>1. The Threat Landscape</h2>
+        <ul>
+            <li>Modern cyber attacks are <span class="highlight">highly automated</span> and continuous.</li>
+            <li>Hackers deploy massive botnets to scan thousands of web servers per second.</li>
+            <li>Traditional defenses (Firewalls/IDS) rely on passive blocking (e.g., dropping packets).</li>
+            <li>This creates a massive volume of alerts, leading to <span class="highlight">Alert Fatigue</span>.</li>
+        </ul>
+    </div>
 
-            <!-- Slide 4: Proposed Solution -->
-            <section>
-                <h2>3. Proposed Solution: WebTrap</h2>
-                <p>I engineered a Deception Technology framework designed to trap attackers.</p>
-                <ul>
-                    <li><strong>The Lure:</strong> A simulated, highly realistic Enterprise Login Gateway.</li>
-                    <li><strong>The Trap:</strong> Silently logs all credential stuffing and payload injections.</li>
-                    <li><strong>The Profiler:</strong> Automatically traces the hacker's IP, ISP, and geographic Location.</li>
-                    <li><strong>The Retaliation:</strong> Wastes the attacker's computing resources via Tarpitting.</li>
-                </ul>
-            </section>
-
-            <!-- Slide 5: System Architecture -->
-            <section>
-                <h2>4. System Architecture</h2>
-                <p>Built strictly using <span class="highlight">Python 3</span> and <span class="highlight">Bash</span> to ensure zero-dependency, lightweight deployment on any Linux server.</p>
-                <div class="grid-container">
-                    <div class="card" style="border-color: #58a6ff;">
-                        <h3>Python Trap Engine</h3>
-                        <p>Uses <code>http.server</code> and <code>socketserver</code>.<br>Handles HTTP Requests.<br>Executes Deep Packet Inspection (DPI).</p>
-                    </div>
-                    <div class="card" style="border-color: #ff7b72;">
-                        <h3>Bash Profiling Engine</h3>
-                        <p>Asynchronous Daemon process.<br>Uses <code>awk/grep</code> for log parsing.<br>Integrates with external OSINT APIs.</p>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Slide 6: Deep Packet Inspection -->
-            <section>
-                <h2>5. Deep Packet Inspection (DPI)</h2>
-                <p>The Python server analyzes incoming HTTP payloads against a Regex Engine to detect malicious intent.</p>
-                <div class="code-block">
-# Threat Signatures Engine
-SIGNATURES = {
-    "SQL_INJECTION": re.compile(r"(%27)|(')|(--)|(%23)|(#)|(UNION)|(SELECT)"),
-    "XSS_SCRIPTING": re.compile(r"(<script>)|(%3Cscript%3E)|(javascript:)"),
-    "PATH_TRAVERSAL": re.compile(r"(\.\./)|(%2e%2e%2f)")
-}
-                </div>
-                <p style="margin-top:20px;">If a match is found, the attack is tagged and the Tarpit is engaged.</p>
-            </section>
-
-            <!-- Slide 7: Active Defense (Tarpitting) -->
-            <section>
-                <h2>6. Tarpitting (Active Retaliation)</h2>
-                <p>A "Tarpit" is a defensive mechanism that intentionally delays incoming network connections.</p>
-                <ul>
-                    <li>Automated scanning tools (like <code>Nmap</code> or <code>DirBuster</code>) expect rapid HTTP responses.</li>
-                    <li>When WebTrap detects a malicious payload, it forces a <span class="highlight">5-second artificial delay</span>.</li>
-                    <li>This paralyzes the attacker's scanning script, draining their TCP threads and computing resources.</li>
-                </ul>
-            </section>
-
-            <!-- Slide 8: Automated OSINT Gathering -->
-            <section>
-                <h2>7. Automated Threat Intelligence</h2>
-                <p>The Bash Engine streams the logs asynchronously. When a new attacker appears, it triggers an OSINT (Open Source Intelligence) sequence.</p>
-                <ul>
-                    <li>Extracts the IP Address using <code>awk</code>.</li>
-                    <li>Queries the <code>ipinfo.io</code> REST API.</li>
-                    <li>Resolves the IP to a Physical City, Country, and ISP Organization.</li>
-                    <li>Caches the IP to prevent alert spam (Deduplication).</li>
-                </ul>
-            </section>
-
-            <!-- Slide 9: Log Output Example -->
-            <section>
-                <h2>8. Threat Intelligence Output</h2>
-                <p>The raw terminal output of the Bash Profiling Engine in action:</p>
-                <div class="code-block" style="font-size:0.65em;">
-===================================================<br>
-[!] CRITICAL ALERT: Malicious activity detected from 172.24.58.154<br>
-&nbsp;&nbsp;&nbsp;&nbsp;-> Signatures Matched: [ XSS_SCRIPTING ]<br>
-&nbsp;&nbsp;&nbsp;&nbsp;-> Executing OSINT Profiling...<br>
-&nbsp;&nbsp;&nbsp;&nbsp;-> Target Identified: London, GB (Virgin Media)<br>
-===================================================
-                </div>
-                <p style="margin-top:20px;"><em>This raw data is then piped into a dynamic HTML dashboard.</em></p>
-            </section>
-
-            <!-- Slide 10: Live Demo -->
-            <section>
-                <h1 style="color: #ff7b72;">9. LIVE DEMO</h1>
-                <p>Demonstrating Credential Stuffing & Payload Injection</p>
-                <p style="font-size:0.7em; color:#8b949e;">(Switching to Terminal and Browser Interface)</p>
-            </section>
-
-            <!-- Slide 11: Future Enhancements -->
-            <section>
-                <h2>10. Future Enhancements</h2>
-                <ul>
-                    <li><strong>Automated Null-Routing:</strong> Integrating the Bash script with Linux <code>iptables</code> to automatically drop all future packets from a profiled IP at the kernel level.</li>
-                    <li><strong>Machine Learning DPI:</strong> Replacing static Regex signatures with an anomaly-detection ML model to catch zero-day payloads.</li>
-                    <li><strong>Multi-Protocol Deception:</strong> Expanding the Python server to host fake SSH (Port 22) and FTP (Port 21) services to trap diverse botnets.</li>
-                </ul>
-            </section>
-
-            <!-- Slide 12: Conclusion -->
-            <section>
-                <h2>11. Conclusion</h2>
-                <ul>
-                    <li>WebTrap demonstrates that enterprise-grade Active Defense is highly achievable with fundamental scripting.</li>
-                    <li>Shifting the security posture from <strong>Reactive</strong> to <strong>Proactive</strong> yields actionable threat intelligence.</li>
-                    <li>Deception technology drastically reduces SOC alert fatigue by ensuring only high-confidence attacks are investigated.</li>
-                </ul>
-                <h3 style="margin-top: 40px; color: #ff7b72;">Thank You.</h3>
-                <p>Questions?</p>
-            </section>
-
+    <!-- Slide 3 -->
+    <div class="slide-container" id="slide-3">
+        <h2>2. Passive vs. Active Defense</h2>
+        <div class="grid">
+            <div class="card" style="border-top: 4px solid #ff7b72;">
+                <h3 style="margin-top:0;">Traditional Firewalls</h3>
+                <p style="font-size:1.1rem;">Simply drop the connection when a threat is detected.</p>
+                <p style="font-size:1.1rem;"><strong>Result:</strong> Zero intelligence is gathered about the attacker's motives.</p>
+            </div>
+            <div class="card" style="border-top: 4px solid #58a6ff;">
+                <h3 style="margin-top:0; color:#58a6ff;">Active Defense</h3>
+                <p style="font-size:1.1rem;">Engages the attacker, tricks them, and studies their methodology.</p>
+                <p style="font-size:1.1rem;"><strong>Result:</strong> Gathers high-fidelity Intelligence and wastes attacker resources.</p>
+            </div>
         </div>
     </div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reveal.min.js"></script>
+
+    <!-- Slide 4 -->
+    <div class="slide-container" id="slide-4">
+        <h2>3. Proposed Solution: WebTrap</h2>
+        <p style="text-align:center; margin-bottom: 30px;">A custom Deception Technology framework.</p>
+        <div style="display:inline-block; text-align:left;">
+            <ul>
+                <li><strong>The Lure:</strong> A simulated, realistic Enterprise Login Gateway.</li>
+                <li><strong>The Trap:</strong> Silently logs all credential stuffing and payloads.</li>
+                <li><strong>The Profiler:</strong> Automatically traces the hacker's ISP and Location.</li>
+                <li><strong>The Retaliation:</strong> Wastes the attacker's computing resources.</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Slide 5 -->
+    <div class="slide-container" id="slide-5">
+        <h2>4. System Architecture</h2>
+        <p style="text-align:center;">Built strictly using <span class="highlight">Python 3</span> and <span class="highlight">Bash</span> for zero-dependency deployment.</p>
+        <div class="grid">
+            <div class="card">
+                <h3 style="margin-top:0; font-size:1.4rem;">🐍 Python Trap Engine</h3>
+                <p style="font-size:1.1rem;">- Handles HTTP Requests.<br>- Executes Deep Packet Inspection.<br>- Applies Tarpit Defense.</p>
+            </div>
+            <div class="card">
+                <h3 style="margin-top:0; font-size:1.4rem; color:#ff7b72;">⚙️ Bash Profiling Engine</h3>
+                <p style="font-size:1.1rem;">- Asynchronous Daemon process.<br>- OSINT API Integration.<br>- Generates HTML Dashboards.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 6 -->
+    <div class="slide-container" id="slide-6">
+        <h2>5. Deep Packet Inspection (DPI)</h2>
+        <p style="text-align:center;">The Python server analyzes incoming HTTP payloads against a custom Regex Engine.</p>
+        <div class="code-block">
+# Threat Signatures Engine
+SIGNATURES = {
+    "SQL_INJECTION": re.compile(r"(%27)|(')|(--)|(UNION)|(SELECT)"),
+    "XSS_SCRIPTING": re.compile(r"(<script>)|(%3Cscript%3E)"),
+    "PATH_TRAVERSAL": re.compile(r"(\.\./)|(%2e%2e%2f)")
+}
+        </div>
+    </div>
+
+    <!-- Slide 7 -->
+    <div class="slide-container" id="slide-7">
+        <h2>6. Tarpitting (Active Retaliation)</h2>
+        <ul>
+            <li>Automated scanning tools expect rapid HTTP responses.</li>
+            <li>When WebTrap detects a malicious payload, it forces a <span class="highlight">5-second artificial delay</span>.</li>
+            <li>This paralyzes the attacker's scanning script, draining their TCP threads and computing resources.</li>
+        </ul>
+    </div>
+
+    <!-- Slide 8 -->
+    <div class="slide-container" id="slide-8">
+        <h2>7. Threat Intelligence Output</h2>
+        <p style="text-align:center;">The raw terminal output of the Bash Profiling Engine:</p>
+        <div class="code-block" style="color:#c9d1d9;">
+===================================================
+<span style="color:#ff7b72">[!] CRITICAL ALERT: Malicious activity detected from 172.24.58.154</span>
+    -> Signatures Matched: [ XSS_SCRIPTING ]
+    -> Executing OSINT Profiling...
+<span style="color:#7ee787">    -> Target Identified: London, GB (Virgin Media)</span>
+===================================================
+        </div>
+    </div>
+
+    <!-- Slide 9 -->
+    <div class="slide-container" id="slide-9">
+        <h1 style="color: #ff7b72;">8. LIVE DEMO</h1>
+        <p style="text-align:center; margin-top:20px;">Demonstrating Credential Stuffing & Payload Injection</p>
+    </div>
+
+    <!-- Slide 10 -->
+    <div class="slide-container" id="slide-10">
+        <h2>9. Conclusion</h2>
+        <ul>
+            <li>WebTrap demonstrates that enterprise-grade Active Defense is highly achievable with fundamental scripting.</li>
+            <li>Shifting the security posture from <strong>Reactive</strong> to <strong>Proactive</strong> yields actionable threat intelligence.</li>
+            <li>Deception technology drastically reduces SOC alert fatigue.</li>
+        </ul>
+        <h1 style="color:#ff7b72; margin-top:50px; font-size:2.5rem;">Thank You.</h1>
+    </div>
+
+    <div class="controls">
+        Slide <span id="current-slide">1</span> / 10
+    </div>
+
     <script>
-        Reveal.initialize({
-            hash: true,
-            transition: 'slide',
-            controls: true,
-            progress: true
+        let currentSlide = 1;
+        const totalSlides = 10;
+
+        function showSlide(index) {
+            document.querySelectorAll('.slide-container').forEach(slide => {
+                slide.classList.remove('active');
+            });
+            document.getElementById(`slide-${index}`).classList.add('active');
+            document.getElementById('current-slide').innerText = index;
+        }
+
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === 'Space') {
+                if (currentSlide < totalSlides) {
+                    currentSlide++;
+                    showSlide(currentSlide);
+                }
+            } else if (e.key === 'ArrowLeft') {
+                if (currentSlide > 1) {
+                    currentSlide--;
+                    showSlide(currentSlide);
+                }
+            }
         });
     </script>
 </body>
