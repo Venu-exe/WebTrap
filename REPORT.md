@@ -41,6 +41,7 @@ The WebTrap framework is decoupled into two primary micro-engines to ensure stab
 4. Bash Profiler detects new log entry -> Extracts IP Address.
 5. Bash Profiler queries `ipinfo.io` -> Retrieves Geolocation & ASN.
 6. Bash Profiler writes data to `threat_report.html`.
+7. In parallel, Python Server dispatches an instant email alert on detection (Step 3), and Bash Profiler dispatches a follow-up, enriched email alert once OSINT resolution completes (Step 5).
 
 ---
 
@@ -71,6 +72,14 @@ This simple blocking call prevents the Python thread from responding immediately
 The Bash script acts as a daemon, using `tail -F` to stream logs. It uses `awk` and `grep` to extract IP addresses. To prevent API rate-limiting, an IP cache (`profiled_ips.txt`) is maintained. 
 The system uses `curl` to fetch JSON data from `ipinfo.io`, parsing out the `City`, `Country`, and `ISP/Org` of the attacker, enriching the raw IP address into actionable Threat Intelligence.
 
+### 5.4 Real-Time Alerting Subsystem
+To close the gap between detection and human response time, WebTrap was extended with a real-time email alerting subsystem operating in two stages:
+
+1. **Immediate Detection Alert (Python):** As soon as the DPI engine flags a request against a known threat signature (SQL Injection, XSS, Command Injection, Path Traversal), an email alert is dispatched asynchronously via a background thread using `smtplib`. This ensures the alerting mechanism never blocks or delays the honeypot's response to the attacker, preserving the illusion of a legitimate server.
+2. **Enriched Profiling Alert (Bash):** Once the threat profiler completes OSINT enrichment for a newly observed attacker IP, a second, more detailed email is sent via `curl`'s native SMTPS support, containing the attacker's inferred physical location and network origin.
+
+A per-IP cooldown (default: 5 minutes) prevents alert fatigue during automated scanning bursts, ensuring the operator is notified of new threats without being overwhelmed by repeated payloads from the same source. Both credentials and recipient details are supplied via environment variables (`WEBTRAP_SENDER_EMAIL`, `WEBTRAP_SENDER_PASSWORD`, `WEBTRAP_RECEIVER_EMAIL`) rather than hardcoded, and alerting is entirely optional — if unconfigured, the system runs normally with alerts silently disabled.
+
 ---
 
 ## 6. Testing and Results
@@ -86,6 +95,10 @@ The system uses `curl` to fetch JSON data from `ipinfo.io`, parsing out the `Cit
 ### 6.3 Test Case 3: OSINT Resolution
 - **Action:** A remote IP (e.g., `8.8.8.8`) triggered an alert.
 - **System Response:** The Bash profiler instantly resolved the IP to its geographic location and ISP (e.g., Google LLC), successfully generating a new row in the live HTML dashboard.
+
+### 6.4 Test Case 4: Real-Time Email Alerting
+- **Action:** Sent an HTTP GET request to `/?id=1' UNION SELECT username,password FROM users--`.
+- **System Response:** The DPI engine flagged the payload as `[SQL_INJECTION]` and dispatched an immediate email alert containing the attacker's IP, attack type, and matched signatures. Seconds later, once the Bash profiler resolved the IP's geolocation, a second follow-up email arrived containing the enriched location and ISP data. Repeating the same payload from the same IP within 5 minutes correctly suppressed duplicate alerts, confirming the cooldown mechanism.
 
 ---
 
