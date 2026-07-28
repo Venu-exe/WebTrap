@@ -7,6 +7,9 @@ import json
 import re
 import time
 import sys
+import smtplib
+import threading
+from email.mime.text import MIMEText
 from datetime import datetime
 
 # Configuration
@@ -33,6 +36,55 @@ SIGNATURES = {
     "PATH_TRAVERSAL": re.compile(r"(\.\./)|(%2e%2e%2f)", re.IGNORECASE)
 }
 
+# Email Alert Configuration
+SMTP_SERVER = "smtp.gmail.com"
+SMTP_PORT = 587
+SENDER_EMAIL = os.environ.get("WEBTRAP_SENDER_EMAIL", "")
+SENDER_PASSWORD = os.environ.get("WEBTRAP_SENDER_PASSWORD", "")  # Gmail App Password, not your real password
+RECEIVER_EMAIL = os.environ.get("WEBTRAP_RECEIVER_EMAIL", "")
+ALERT_COOLDOWN_SECONDS = 300  # don't re-alert on the same IP within 5 minutes
+
+_last_alert_time = {}  # tracks cooldown per IP
+_alert_lock = threading.Lock()
+
+
+def send_email_alert(ip, attack_type, tags, details):
+    if not (SENDER_EMAIL and SENDER_PASSWORD and RECEIVER_EMAIL):
+        return  # alerts not configured, skip silently
+
+    with _alert_lock:
+        last_time = _last_alert_time.get(ip, 0)
+        if time.time() - last_time < ALERT_COOLDOWN_SECONDS:
+            return  # still in cooldown, skip
+        _last_alert_time[ip] = time.time()
+
+    def _send():
+        try:
+            subject = f"[WebTrap ALERT] {attack_type} from {ip}"
+            body = (
+                f"WebTrap detected a malicious request.\n\n"
+                f"Attacker IP: {ip}\n"
+                f"Attack Type: {attack_type}\n"
+                f"Signatures: {', '.join(tags)}\n"
+                f"Details: {details}\n"
+                f"Time: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n"
+            )
+            msg = MIMEText(body)
+            msg["Subject"] = subject
+            msg["From"] = SENDER_EMAIL
+            msg["To"] = RECEIVER_EMAIL
+
+            with smtplib.SMTP(SMTP_SERVER, SMTP_PORT) as server:
+                server.starttls()
+                server.login(SENDER_EMAIL, SENDER_PASSWORD)
+                server.sendmail(SENDER_EMAIL, RECEIVER_EMAIL, msg.as_string())
+            print(f"[*] Email alert sent for {ip}")
+        except Exception as e:
+            print(f"[ERROR] Failed to send email alert: {str(e)}")
+
+    threading.Thread(target=_send, daemon=True).start()
+
+
 class AdvancedHoneypotHandler(http.server.BaseHTTPRequestHandler):
     
     def analyze_payload(self, payload_str):
@@ -50,6 +102,11 @@ class AdvancedHoneypotHandler(http.server.BaseHTTPRequestHandler):
         
         print(f"[!] {log_entry}")
         logging.info(log_entry)
+
+        # Only alert on real threats, not routine reconnaissance
+        if attack_type in ("MALICIOUS_GET", "MALICIOUS_POST"):
+            send_email_alert(client_ip, attack_type, tags, details)
+
         return tag_str
 
     def apply_tarpit(self):
