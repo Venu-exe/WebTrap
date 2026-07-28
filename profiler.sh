@@ -7,8 +7,55 @@ LOG_FILE="logs/honeypot.log"
 PROFILED_IPS="logs/profiled_ips.txt"
 REPORT_FILE="logs/threat_report.html"
 
+# Email Alert Configuration (reuses same env vars as webtrap.py)
+SENDER_EMAIL="${WEBTRAP_SENDER_EMAIL:-}"
+SENDER_PASSWORD="${WEBTRAP_SENDER_PASSWORD:-}"
+RECEIVER_EMAIL="${WEBTRAP_RECEIVER_EMAIL:-}"
+SMTP_HOST="smtp.gmail.com"
+SMTP_PORT="465"
+
 mkdir -p logs
 touch "$LOG_FILE" "$PROFILED_IPS"
+
+send_email_alert() {
+    local ip="$1"
+    local location="$2"
+    local tags="$3"
+
+    # Skip silently if not configured
+    if [ -z "$SENDER_EMAIL" ] || [ -z "$SENDER_PASSWORD" ] || [ -z "$RECEIVER_EMAIL" ]; then
+        return
+    fi
+
+    local tmp_mail
+    tmp_mail=$(mktemp)
+
+    cat <<MAILEOF > "$tmp_mail"
+From: WebTrap Honeypot <$SENDER_EMAIL>
+To: $RECEIVER_EMAIL
+Subject: [WebTrap ALERT] Threat Profiled - $ip
+
+WebTrap has profiled a new attacker.
+
+Attacker IP: $ip
+Location/ISP: $location
+Threat Signatures: $tags
+Time: $(date '+%Y-%m-%d %H:%M:%S')
+
+Full report: logs/threat_report.html
+MAILEOF
+
+    # Send via curl SMTP, in the background so it never blocks monitoring
+    (
+        curl -s --url "smtps://${SMTP_HOST}:${SMTP_PORT}" --ssl-reqd \
+            --mail-from "$SENDER_EMAIL" \
+            --mail-rcpt "$RECEIVER_EMAIL" \
+            --upload-file "$tmp_mail" \
+            --user "${SENDER_EMAIL}:${SENDER_PASSWORD}" \
+            > /dev/null 2>&1
+        rm -f "$tmp_mail"
+    ) &
+}
 
 clear
 echo "==================================================="
@@ -76,7 +123,9 @@ tail -Fn0 "$LOG_FILE" | while read -r line; do
             fi
             
             echo "    -> Target Identified: $LOCATION"
-            
+
+            send_email_alert "$IP" "$LOCATION" "$TAGS"
+
             # Active defense logic (disabled by default for safety)
             # echo "    -> Null-routing IP via iptables..."
             # sudo iptables -A INPUT -s $IP -j DROP
