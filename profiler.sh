@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/use/bin/env bash
 
 # WebTrap Threat Profiler
 # Continuous monitoring and OSINT gathering
